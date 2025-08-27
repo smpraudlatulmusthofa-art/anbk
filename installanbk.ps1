@@ -31,8 +31,17 @@ $SevenZipInstallerUrl = "https://www.7-zip.org/a/7z2408-x64.exe"   # versi terba
 
 # 4. Pastikan folder tujuan ada
 if (!(Test-Path $ExtractPath)) {
+    # Kalau folder belum ada → buat baru
     New-Item -ItemType Directory -Path $ExtractPath | Out-Null
 }
+else {
+    # Kalau folder sudah ada → cek apakah file download ada
+    if (!(Test-Path $DownloadPath)) {
+        Write-Host "Update terdeteksi, membersihkan isi folder $ExtractPath ..."
+        Get-ChildItem -Path $ExtractPath -Recurse -Force | Remove-Item -Recurse -Force
+    }
+}
+
 
 # 5. Cek apakah 7-Zip sudah terinstall
 if (!(Test-Path $SevenZipPath)) {
