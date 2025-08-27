@@ -1,0 +1,79 @@
+# ========================
+# Konfigurasi
+# ========================
+$Url = "https://unp.kemdikbud.go.id/tes/64BitExambrowserClient_25.0525.rar"
+$ExtractPath = "$env:USERPROFILE\Documents\exambrowser_client"
+$DownloadPath = Join-Path $ExtractPath "64BitExambrowserClient_25.0525.rar"
+
+$SevenZip64 = "C:\Program Files\7-Zip\7z.exe"
+$SevenZip32 = "C:\Program Files (x86)\7-Zip\7z.exe"
+$SevenZipInstaller = "$env:TEMP\7zSetup.exe"
+$SevenZipUrl_x64 = "https://www.7-zip.org/a/7z2408-x64.exe"
+$SevenZipUrl_x86 = "https://www.7-zip.org/a/7z2408.exe"
+
+# ========================
+# Buat folder tujuan jika belum ada
+# ========================
+if (!(Test-Path $ExtractPath)) {
+    New-Item -ItemType Directory -Path $ExtractPath | Out-Null
+}
+
+# ========================
+# Cek & install 7-Zip
+# ========================
+if (Test-Path $SevenZip64) {
+    $SevenZipPath = $SevenZip64
+} elseif (Test-Path $SevenZip32) {
+    $SevenZipPath = $SevenZip32
+} else {
+    Write-Host "7-Zip tidak ditemukan. Downloading installer..."
+
+    if ([Environment]::Is64BitOperatingSystem) {
+        Invoke-WebRequest -Uri $SevenZipUrl_x64 -OutFile $SevenZipInstaller
+    } else {
+        Invoke-WebRequest -Uri $SevenZipUrl_x86 -OutFile $SevenZipInstaller
+    }
+
+    Write-Host "Installing 7-Zip..."
+    Start-Process -FilePath $SevenZipInstaller -ArgumentList "/S" -Wait
+    Remove-Item $SevenZipInstaller
+
+    # Tentukan path setelah install
+    if (Test-Path $SevenZip64) {
+        $SevenZipPath = $SevenZip64
+    } else {
+        $SevenZipPath = $SevenZip32
+    }
+}
+
+# ========================
+# Cek & download file RAR
+# ========================
+if (!(Test-Path $DownloadPath)) {
+    Write-Host "File RAR tidak ditemukan. Downloading..."
+    Invoke-WebRequest -Uri $Url -OutFile $DownloadPath
+} else {
+    Write-Host "File RAR sudah ada. Skip download."
+}
+
+# ========================
+# Extract file dengan 7-Zip
+# ========================
+Write-Host "`nExtracting file..."
+& "$SevenZipPath" x "$DownloadPath" "-o$ExtractPath" -y
+
+# ========================
+# Rapikan hasil (kalau ada subfolder utama)
+# ========================
+$subFolders = Get-ChildItem -Path $ExtractPath -Directory
+foreach ($folder in $subFolders) {
+    if ($folder.Name -like "64BitExambrowserClient*") {
+        Write-Host "Memindahkan isi dari $($folder.FullName) ke $ExtractPath..."
+        Get-ChildItem -Path $folder.FullName -Force | ForEach-Object {
+            Move-Item -Path $_.FullName -Destination $ExtractPath -Force
+        }
+        Remove-Item -Path $folder.FullName -Recurse -Force
+    }
+}
+
+Write-Host "`nSelesai ✅ Semua file sudah ada di: $ExtractPath"
