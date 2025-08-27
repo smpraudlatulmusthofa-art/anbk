@@ -3,7 +3,13 @@
 # ==========================
 
 # 1. Aktifkan TLS 1.2 agar semua versi PowerShell bisa download
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+try {
+    # Untuk PowerShell versi baru
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+} catch {
+    # Fallback untuk versi lama (angka 3072 = TLS1.2)
+    [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor 3072
+}
 
 # 2. Tentukan arsitektur & URL download
 $DownloadUrl64  = "https://unp.kemdikbud.go.id/tes/64BitExambrowserClient_25.0525.rar"
