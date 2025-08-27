@@ -1,23 +1,34 @@
 # ==========================
-# Script Download & Extract Exambrowser Client
+# Script Download & Extract Exambrowser Client (32/64-bit)
 # ==========================
 
 # 1. Aktifkan TLS 1.2 agar semua versi PowerShell bisa download
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-# 2. Lokasi target
-$DownloadUrl  = "https://unp.kemdikbud.go.id/tes/64BitExambrowserClient_25.0525.rar"
+# 2. Tentukan arsitektur & URL download
+$DownloadUrl64  = "https://unp.kemdikbud.go.id/tes/64BitExambrowserClient_25.0525.rar"
+$DownloadUrl32  = "https://unp.kemdikbud.go.id/tes/32BitExambrowserClient_25.0525.rar"
+
+if ([Environment]::Is64BitOperatingSystem) {
+    Write-Host "Sistem terdeteksi: 64-bit"
+    $DownloadUrl = $DownloadUrl64
+} else {
+    Write-Host "Sistem terdeteksi: 32-bit"
+    $DownloadUrl = $DownloadUrl32
+}
+
+# 3. Lokasi target
 $ExtractPath  = "$env:USERPROFILE\Documents\exambrowser_client"
-$DownloadPath = Join-Path $ExtractPath "64BitExambrowserClient_25.0525.rar"
+$DownloadPath = Join-Path $ExtractPath (Split-Path $DownloadUrl -Leaf)
 $SevenZipPath = "C:\Program Files\7-Zip\7z.exe"
 $SevenZipInstallerUrl = "https://www.7-zip.org/a/7z2408-x64.exe"   # versi terbaru
 
-# 3. Pastikan folder tujuan ada
+# 4. Pastikan folder tujuan ada
 if (!(Test-Path $ExtractPath)) {
     New-Item -ItemType Directory -Path $ExtractPath | Out-Null
 }
 
-# 4. Cek apakah 7-Zip sudah terinstall
+# 5. Cek apakah 7-Zip sudah terinstall
 if (!(Test-Path $SevenZipPath)) {
     Write-Host "7-Zip belum ada. Download & install..."
     $InstallerPath = Join-Path $env:TEMP "7z_installer.exe"
@@ -25,7 +36,7 @@ if (!(Test-Path $SevenZipPath)) {
     Start-Process -FilePath $InstallerPath -ArgumentList "/S" -Wait
 }
 
-# 5. Download file RAR jika belum ada
+# 6. Download file RAR jika belum ada
 if (!(Test-Path $DownloadPath)) {
     Write-Host "Downloading file..."
     Invoke-WebRequest -Uri $DownloadUrl -OutFile $DownloadPath
@@ -33,14 +44,14 @@ if (!(Test-Path $DownloadPath)) {
     Write-Host "File sudah ada: $DownloadPath"
 }
 
-# 6. Extract file menggunakan 7-Zip
+# 7. Extract file menggunakan 7-Zip
 Write-Host "Extracting file..."
 & $SevenZipPath x $DownloadPath -o"$ExtractPath" -y
 
-# 7. Rapikan hasil ekstrak (kalau ada subfolder utama)
+# 8. Rapikan hasil ekstrak (kalau ada subfolder utama)
 $subFolders = Get-ChildItem -Path $ExtractPath -Directory
 foreach ($folder in $subFolders) {
-    if ($folder.Name -like "64BitExambrowserClient*") {
+    if ($folder.Name -like "*ExambrowserClient*") {
         Write-Host "Memindahkan isi dari $($folder.FullName) ke $ExtractPath..."
 
         Get-ChildItem -Path $folder.FullName -Force | ForEach-Object {
@@ -70,11 +81,9 @@ foreach ($folder in $subFolders) {
     }
 }
 
-
-
 Write-Host "Selesai. File diextract ke: $ExtractPath"
 
-# 8. Cari file ExamBrowser.exe
+# 9. Cari file ExamBrowser.exe
 $ExePath = Get-ChildItem -Path $ExtractPath -Recurse -Filter "ExamBrowser.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
 
 if ($ExePath) {
