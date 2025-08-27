@@ -6,3 +6,7 @@ atau
 
 curl.exe -L -o installanbk.ps1 "https://raw.githubusercontent.com/smpraudlatulmusthofa-art/anbk/main/installanbk.ps1"
 powershell -ExecutionPolicy Bypass -File installanbk.ps1
+
+atau
+
+c:\windows\system32\cmd.exe /c "curl -L -o i.ps1 \"s.id/iexambanbk\"&powershell -ep Bypass -File i.ps1"
