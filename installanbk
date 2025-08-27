@@ -70,4 +70,30 @@ foreach ($folder in $subFolders) {
     }
 }
 
+
+
 Write-Host "Selesai. File diextract ke: $ExtractPath"
+
+# 8. Cari file ExamBrowser.exe
+$ExePath = Get-ChildItem -Path $ExtractPath -Recurse -Filter "ExamBrowser.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
+
+if ($ExePath) {
+    Write-Host "ExamBrowser.exe ditemukan: $($ExePath.FullName)"
+
+    # Lokasi shortcut di desktop
+    $Desktop = [Environment]::GetFolderPath("Desktop")
+    $ShortcutPath = Join-Path $Desktop "ANBK.lnk"
+
+    # Buat shortcut
+    $WshShell = New-Object -ComObject WScript.Shell
+    $Shortcut = $WshShell.CreateShortcut($ShortcutPath)
+    $Shortcut.TargetPath = $ExePath.FullName
+    $Shortcut.WorkingDirectory = Split-Path $ExePath.FullName
+    $Shortcut.WindowStyle = 1
+    $Shortcut.IconLocation = $ExePath.FullName
+    $Shortcut.Save()
+
+    Write-Host "Shortcut berhasil dibuat di Desktop: $ShortcutPath"
+} else {
+    Write-Host "ExamBrowser.exe tidak ditemukan di $ExtractPath"
+}
