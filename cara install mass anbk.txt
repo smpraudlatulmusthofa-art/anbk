@@ -9,4 +9,4 @@ powershell -ExecutionPolicy Bypass -File installanbk.ps1
 
 atau
 
-c:\windows\system32\cmd.exe /c "curl -L -o i.ps1 \"s.id/iexambanbk\"&powershell -ep Bypass -File i.ps1"
+c:\windows\system32\cmd.exe /c "curl -L -o i.ps1 \"s.id/iexambanbk\"&powershell -ep bypass -File i.ps1"
